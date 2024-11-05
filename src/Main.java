@@ -1,41 +1,36 @@
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.CyclicBarrier;
 
-class Logger {
-    private BlockingQueue<String> logQueue = new LinkedBlockingQueue<>();
+public class Main {
 
-    public void log(String message) {
-        try {
-            logQueue.put(message);  // Block if the queue is full
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-        }
-    }
+    public static void main(String[] args) throws InterruptedException {
+        // Queues for each stage
 
-    public void startLogging() {
-        new Thread(() -> {
-            try {
-                while (true) {
-                    String logMessage = logQueue.take();  // Block if the queue is empty
-                    System.out.println("Writing to log: " + logMessage);
-                }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            }
-        }).start();
-    }
-}
 
-public class App {
-    public static void main(String[] args) {
-        Logger logger = new Logger();
-        logger.startLogging();
+        BlockingQueue<Integer> copyQueue = new ArrayBlockingQueue<>(10);
+        BlockingQueue<Integer> queue2 = new ArrayBlockingQueue<>(10);
+        BlockingQueue<Integer> queue3 = new ArrayBlockingQueue<>(10);
+        BlockingQueue<Integer> queue5 = new ArrayBlockingQueue<>(10);
+        BlockingQueue<Integer> mergeQueue = new ArrayBlockingQueue<>(10);
+        BlockingQueue<Integer> printqueue = new ArrayBlockingQueue<>(10);
+        CyclicBarrier barrier = new CyclicBarrier(4);
+        //CountDownLatch latch = new CountDownLatch(3);
 
-        // Simulating multiple threads generating log messages
-        for (int i = 0; i < 5; i++) {
-            new Thread(() -> {
-                logger.log("Log message from " + Thread.currentThread().getName());
-            }).start();
-        }
+        // Start the threads
+        copyQueue.add(1);
+        new Thread(new Copy_thread(copyQueue, queue2, queue3, queue5,printqueue)).start();
+        new Thread(new Multiply(2, queue2, mergeQueue,barrier)).start();
+        new Thread(new Multiply(3, queue3, mergeQueue,barrier)).start();
+        new Thread(new Multiply(5, queue5, mergeQueue,barrier)).start();
+        new Thread(new Merge(mergeQueue, copyQueue,barrier)).start();
+
+        // latch.await();
+
+
+        new Thread(new Print(printqueue)).start();
+
+
+
     }
 }
