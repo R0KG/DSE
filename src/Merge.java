@@ -3,14 +3,14 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CyclicBarrier;
 
 public class Merge implements Runnable {
-    private BlockingQueue<Integer> inpQueue, outQueue;
-    private CyclicBarrier barrier;
+    private customBlockQueue<Integer> inpQueue, outQueue;
+
     private PriorityQueue<Integer> sortedSet;
 
-    public Merge(BlockingQueue<Integer> inpQueue, BlockingQueue<Integer> outQueue, CyclicBarrier barrier) {
+    public Merge(customBlockQueue<Integer> inpQueue, customBlockQueue<Integer> outQueue) {
         this.inpQueue = inpQueue;
         this.outQueue = outQueue;
-        this.barrier = barrier;
+
         this.sortedSet = new PriorityQueue<>();
     }
 
@@ -20,7 +20,7 @@ public class Merge implements Runnable {
             while (true) {
                 // Wait until all Multiply threads reach the barrier
 
-
+                Thread.sleep(500);
                 // Collect numbers from inpQueue and maintain order
                 while (!inpQueue.isEmpty()) {
                     int nextNumber = inpQueue.take();
@@ -37,7 +37,7 @@ public class Merge implements Runnable {
                 }
 
                 // Wait again at the barrier to sync with the next cycle
-                barrier.await();
+
             }
         } catch (Exception e) {
             e.printStackTrace();

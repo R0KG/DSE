@@ -1,9 +1,9 @@
 import java.util.concurrent.BlockingQueue;
 
 public class Print implements Runnable {
-    private BlockingQueue<Integer>  inp_query;
+    private customBlockQueue<Integer>  inp_query;
 
-    public Print(BlockingQueue<Integer>  inp_query) {
+    public Print(customBlockQueue<Integer> inp_query) {
         this.inp_query = inp_query;
     }
 

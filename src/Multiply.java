@@ -1,15 +1,14 @@
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
 
 public class Multiply implements Runnable {
-    private BlockingQueue<Integer> inp;
-    private BlockingQueue<Integer> out;
+    private customBlockQueue<Integer> inp;
+    private customBlockQueue<Integer> out;
     private int multiplicator;
     private final CyclicBarrier barrier;
 
 
-    public Multiply(int multiplicator, BlockingQueue<Integer> inp, BlockingQueue<Integer> out , CyclicBarrier barrier) {
+    public Multiply(int multiplicator, customBlockQueue<Integer> inp, customBlockQueue<Integer> out , CyclicBarrier barrier) {
         this.inp = inp;
         this.out = out;
         this.multiplicator = multiplicator;
@@ -27,6 +26,7 @@ public class Multiply implements Runnable {
                 out.put(result); // Place the result into the output queue
 
                 barrier.await();
+                Thread.sleep(500);
             }
         } catch (Exception e) {
             e.printStackTrace();
